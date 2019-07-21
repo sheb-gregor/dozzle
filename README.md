@@ -1,10 +1,10 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/amir20/dozzle)](https://goreportcard.com/report/github.com/amir20/dozzle)
-[![Build Status](https://travis-ci.org/amir20/dozzle.svg?branch=master)](https://travis-ci.org/amir20/dozzle)
+[![Build Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/amir20/dozzle)](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/results/amir20/dozzle)
 [![Docker Pulls](https://img.shields.io/docker/pulls/amir20/dozzle.svg)](https://hub.docker.com/r/amir20/dozzle/)
 [![Docker Size](https://images.microbadger.com/badges/image/amir20/dozzle.svg)](https://hub.docker.com/r/amir20/dozzle/)
 [![Docker Version](https://images.microbadger.com/badges/version/amir20/dozzle.svg)](https://hub.docker.com/r/amir20/dozzle/)
 
-# dozzle
+# Dozzle - [dozzle.dev](https://dozzle.dev/)
 
 Dozzle is a log viewer for Docker. It's free. It's small. And it's right in your browser. Oh, did I mention it is also real-time?
 
@@ -28,6 +28,15 @@ The simplest way to use dozzle is to run the docker container. Also, mount the D
 
 dozzle will be available at [http://localhost:8888/](http://localhost:8888/). You can change `-p 8888:8080` to any port. For example, if you want to view dozzle over port 4040 then you would do `-p 4040:8080`.
 
+## Docker swarm deploy
+
+     docker service create \
+    --name=dozzle \
+    --publish=8888:8080 \
+    --constraint=node.role==manager \
+    --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+    amir20/dozzle:latest
+
 #### Security
 
 dozzle doesn't support authentication out of the box. You can control the device dozzle binds to by passing `--addr` parameter. For example,
@@ -39,24 +48,24 @@ will bind to `localhost` on port `1224`. You can then use a reverse proxy to con
 #### Changing base URL
 
 dozzle by default mounts to "/". If you want to control the base path you can use the `--base` option. For example, if you want to mount at "/foobar",
-then you can override by using `--base /foobar`.
+then you can override by using `--base /foobar`. See env variables below for using `DOZZLE_BASE` to change this.
 
     $ docker run --volume=/var/run/docker.sock:/var/run/docker.sock -p 8080:8080 amir20/dozzle:latest --base /foobar
 
 dozzle will be available at [http://localhost:8080/foobar/](http://localhost:8080/foobar/).
 
 
-#### Environment variable, DOCKER_API_VERSION
+#### Environment variables and configuration
 
-If you see
+Dozzle follows the [12-factor](https://12factor.net/) model. Configurations can use the CLI flags or enviroment variables. The table below outlines all supported options and their respective env vars.
 
-    2018/10/31 08:53:17 Error response from daemon: client version 1.40 is too new. Maximum supported API version is 1.38
-
-Then you need to modify `DOCKER_API_VERSION` to let dozzle know which version of the API is supported. By default, `DOCKER_API_VERSION=1.38` and you can change it by passing `-e` flag. For example, this would change the `DOCKER_API_VERSION` to `1.20`
-
-    $ docker run --volume=/var/run/docker.sock:/var/run/docker.sock -e DOCKER_API_VERSION=1.20 -p 8888:8080 amir20/dozzle:latest
-
-If you are not sure what to set `DOCKER_API_VERSION` then run `docker version` which will show supported API version.
+| Flag | Env Variable | Default |
+| --- | --- | --- |
+| `--addr` | `DOZZLE_ADDR` | `:8080` |
+| `--base` | `DOZZLE_BASE` | `/` |
+| `--level` | `DOZZLE_LEVEL` | `info` |
+| n/a | `DOCKER_API_VERSION` | `1.38` |
+| `--tailSize` | `DOZZLE_TAILSIZE` | `300` |
 
 ## License
 

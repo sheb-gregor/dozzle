@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="columns is-marginless">
-    <aside class="column menu is-2-desktop is-3-tablet">
+    <aside class="column menu is-3-tablet is-2-widescreen">
       <a
         role="button"
         class="navbar-burger burger is-white is-hidden-tablet is-pulled-right"
@@ -19,8 +19,9 @@
         </li>
       </ul>
     </aside>
-    <div class="column is-offset-2-desktop is-offset-3-tablet"><router-view></router-view></div>
-    <vue-headful :title="title" />
+    <div class="column is-offset-3-tablet is-offset-2-widescreen is-9-tablet is-10-widescreen">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -30,14 +31,19 @@ export default {
   name: "App",
   data() {
     return {
-      title: "Dozzle",
+      title: "",
       containers: [],
       showNav: false
     };
   },
+  metaInfo() {
+    return {
+      title: this.title,
+      titleTemplate: "%s - Dozzle"
+    };
+  },
   async created() {
     await this.fetchContainerList();
-    this.title = `${this.containers.length} containers - Dozzle`;
     es = new EventSource(`${BASE_PATH}/api/events/stream`);
     es.addEventListener("containers-changed", e => setTimeout(this.fetchContainerList, 1000), false);
   },
@@ -50,6 +56,7 @@ export default {
   methods: {
     async fetchContainerList() {
       this.containers = await (await fetch(`${BASE_PATH}/api/containers.json`)).json();
+      this.title = `${this.containers.length} containers`;
     }
   },
   watch: {
@@ -80,6 +87,7 @@ aside {
       overflow: auto;
     }
   }
+
   @media screen and (max-width: 768px) {
     & {
       position: sticky;

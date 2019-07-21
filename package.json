@@ -1,17 +1,17 @@
 {
  "name": "dozzle",
- "version": "1.5.7",
- "description": "",
- "main": "index.js",
+ "version": "1.11.8",
+ "description": "Realtime log viewer for docker containers. ",
  "scripts": {
   "prestart": "npm run clean",
   "start": "DOCKER_API_VERSION=1.38 concurrently 'npm run watch-server' 'npm run watch-assets'",
-  "watch-assets": "parcel watch --public-url '__BASE__' assets/index.html -d static",
+  "watch-assets": "npx parcel watch --public-url '__BASE__' assets/index.html -d static",
   "watch-server": "reflex -c .reflex",
   "prebuild": "npm run clean",
-  "build": "parcel build --no-source-maps --public-url '__BASE__' assets/index.html -d static",
+  "build": "npx parcel build --no-source-maps --public-url '__BASE__' assets/index.html -d static",
   "clean": "rm -rf static/ a_main-packr.go",
-  "release": "goreleaser --rm-dist"
+  "release": "goreleaser --rm-dist",
+  "test": "jest"
  },
  "repository": {
   "type": "git",
@@ -24,24 +24,35 @@
  },
  "homepage": "https://github.com/amir20/dozzle#readme",
  "dependencies": {
-  "bulma": "^0.7.2",
-  "date-fns": "^2.0.0-alpha.25",
-  "vue": "^2.5.21",
-  "vue-headful": "^2.0.1",
-  "vue-router": "^3.0.2"
+  "ansi-to-html": "^0.6.11",
+  "bulma": "^0.7.5",
+  "date-fns": "^2.0.0-beta.2",
+  "vue": "^2.6.10",
+  "vue-meta": "^2.0.5",
+  "vue-router": "^3.0.7"
  },
  "devDependencies": {
-  "@babel/core": "^7.2.2",
-  "@babel/plugin-transform-runtime": "^7.2.0",
-  "@vue/component-compiler-utils": "^2.3.1",
-  "concurrently": "^4.1.0",
-  "husky": "^1.2.1",
-  "lint-staged": "^8.1.0",
-  "parcel-bundler": "^1.10.3",
-  "prettier": "^1.15.3",
-  "sass": "^1.15.2",
-  "vue-hot-reload-api": "^2.3.1",
-  "vue-template-compiler": "^2.5.21"
+  "@babel/core": "^7.5.4",
+  "@babel/plugin-transform-runtime": "^7.5.0",
+  "@vue/component-compiler-utils": "^3.0.0",
+  "@vue/test-utils": "^1.0.0-beta.29",
+  "babel-core": "^7.0.0-bridge.0",
+  "babel-jest": "^24.8.0",
+  "concurrently": "^4.1.1",
+  "eventsourcemock": "^2.0.0",
+  "fetch-mock": "^7.3.6",
+  "husky": "^3.0.0",
+  "jest": "^24.8.0",
+  "jest-serializer-vue": "^2.0.2",
+  "lint-staged": "^9.2.0",
+  "mockdate": "^2.0.3",
+  "node-fetch": "^2.6.0",
+  "parcel-bundler": "^1.12.3",
+  "prettier": "^1.18.2",
+  "sass": "^1.22.5",
+  "vue-hot-reload-api": "^2.3.3",
+  "vue-jest": "^3.0.4",
+  "vue-template-compiler": "^2.6.10"
  },
  "husky": {
   "hooks": {
@@ -57,5 +68,34 @@
  "browserslist": [
   ">5%",
   "not ie <= 8"
- ]
+ ],
+ "alias": {
+  "vue": "./node_modules/vue/dist/vue.esm.js"
+ },
+ "jest": {
+  "moduleFileExtensions": [
+   "js",
+   "json",
+   "vue"
+  ],
+  "coveragePathIgnorePatterns": [
+   "node_modules"
+  ],
+  "testPathIgnorePatterns": [
+   "node_modules"
+  ],
+  "transformIgnorePatterns": [
+   "node_modules"
+  ],
+  "watchPathIgnorePatterns": [
+   "<rootDir>/node_modules/"
+  ],
+  "snapshotSerializers": [
+   "jest-serializer-vue"
+  ],
+  "transform": {
+   ".*\\.vue$": "vue-jest",
+   ".+\\.js$": "babel-jest"
+  }
+ }
 }

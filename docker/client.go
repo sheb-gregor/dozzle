@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"strconv"
 	"bytes"
 	"context"
 	"encoding/binary"
@@ -26,8 +27,8 @@ type dockerProxy interface {
 // Client is a proxy around the docker client
 type Client interface {
 	ListContainers() ([]Container, error)
-	ContainerLogs(ctx context.Context, id string) (<-chan string, <-chan error)
-	Events(ctx context.Context) (<-chan events.Message, <-chan error)
+	ContainerLogs(context.Context, string, int) (<-chan string, <-chan error)
+	Events(context.Context) (<-chan events.Message, <-chan error)
 }
 
 // NewClient creates a new instance of Client
@@ -73,8 +74,8 @@ func (d *dockerClient) ListContainers() ([]Container, error) {
 	return containers, nil
 }
 
-func (d *dockerClient) ContainerLogs(ctx context.Context, id string) (<-chan string, <-chan error) {
-	options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true, Tail: "300", Timestamps: true}
+func (d *dockerClient) ContainerLogs(ctx context.Context, id string, tailSize int) (<-chan string, <-chan error) {
+	options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true, Tail: strconv.Itoa(tailSize), Timestamps: true}
 	reader, err := d.cli.ContainerLogs(ctx, id, options)
 	errChannel := make(chan error, 1)
 
